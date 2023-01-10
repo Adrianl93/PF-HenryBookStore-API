@@ -3,6 +3,7 @@ const { Book, Genre, Author, Review, User } = require("../db.js");
 const { authorsAndGenres } = require("./authors_genres_controller");
 const { getAuthorIdByName } = require("../controller/author_controller");
 const { getGenreIdByName } = require("./genre_controller");
+const { Op } = require("sequelize");
 
 function validateId(id) {
   const regexId =
@@ -147,8 +148,10 @@ async function getBookById(id) {
 async function getBooksBytitle(title) {
   let books = await getDbBooks();
 
-  return books.filter((book) =>
-    book.title.toLowerCase().includes(title.toLowerCase())
+  return books.filter(
+    (book) =>
+      book.title.toLowerCase().includes(title.toLowerCase()) ||
+      book.author.name.toLowerCase().includes(title.toLowerCase())
   );
 }
 
