@@ -7,4 +7,3 @@ conn.sync({ force: false }).then(() => {
     console.log(`Server raised in port ${port}`);
   });
 });
-
