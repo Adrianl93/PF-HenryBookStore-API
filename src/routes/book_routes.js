@@ -98,15 +98,22 @@ router.post("/", async (req, res) => {
     newBook.setGenre(genre[0].id);
     newBook.setAuthor(author[0].id);
 
-    await transporter.sendMail({
-      from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
-      to: user.email, // list of receivers
-      subject: `${newBook.title} created`, // Subject line
-      html: `<b>Hi, ${user.userName}! ${book.title} has been added to the catalogue</b>`, // html body
+    let users = await User.findAll();
+
+    users.forEach(async (user) => {
+      if (user.notifications.newBooks) {
+        await transporter.sendMail({
+          from: '"Henry Books " <henrybookexplorer@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: `${newBook.title} has been added to the cataloghe`, // Subject line
+          html: `<b>Hi, ${user.userName}!<p> ${book.title} has been added to the catalogue</p></b>`, // html body
+        });
+      }
     });
 
     res.status(200).json(await getBooksBytitle(title));
   } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });

@@ -56,7 +56,7 @@ module.exports = (sequelize) => {
       },
       notifications: {
         type: DataTypes.JSON,
-        defaultValue: { all: false, expDate: false, newBooks: false },
+        defaultValue: { all: true, expDate: true, newBooks: true },
       },
       googleUser: {
         type: DataTypes.BOOLEAN,
