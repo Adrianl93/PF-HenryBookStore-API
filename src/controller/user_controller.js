@@ -94,7 +94,7 @@ async function editUser(
       }
     }
 
-    if (active !== user.active) {
+    if (active !== null && active !== user.active) {
       if (active === false) {
         await transporter.sendMail({
           from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
