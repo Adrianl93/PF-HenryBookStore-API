@@ -128,7 +128,6 @@ router.put("/", async (req, res) => {
       cover,
       identifier,
     } = req.body;
-    console.log("id ", id);
 
     let author = await Author.findOrCreate({
       where: { name: authorName },

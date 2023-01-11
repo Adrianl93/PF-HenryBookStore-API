@@ -79,6 +79,7 @@ router.put("/edit", async (req, res) => {
     );
     res.status(200).send("User updated succesfully");
   } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });
