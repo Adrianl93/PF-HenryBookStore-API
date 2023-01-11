@@ -242,7 +242,7 @@ router.post("/:id/favorite", async (req, res) => {
   try {
     validateId(id);
     let book = await getBookById(id);
-    let user = await getUserById(userId);
+
     if (!book) {
       throw new Error("Book not found");
     }
@@ -263,17 +263,11 @@ router.delete("/:id/favorite", async (req, res) => {
   try {
     validateId(id);
     let book = await getBookById(id);
+
     if (!book) {
       throw new Error("Book not found");
     }
     await book.removeFavorites(userId);
-
-    await transporter.sendMail({
-      from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
-      to: user.email, // list of receivers
-      subject: `${book.title} removed from favorites`, // Subject line
-      html: `<b>Hi, ${user.userName}! ${book.title} has been removed from your favorites</b>`, // html body
-    });
 
     res.status(200).json(book);
   } catch (e) {
