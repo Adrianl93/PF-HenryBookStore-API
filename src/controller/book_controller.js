@@ -77,9 +77,9 @@ async function createDbBooks() {
         (item) =>
           item.volumeInfo.hasOwnProperty("description") &&
           item.volumeInfo.hasOwnProperty("imageLinks") &&
-          item.volumeInfo.authors.length &&
+          item.volumeInfo.authors?.length &&
           item.volumeInfo.categories &&
-          item.volumeInfo.categories.length &&
+          item.volumeInfo.categories?.length &&
           item.volumeInfo.pageCount &&
           item.volumeInfo.publishedDate &&
           item.volumeInfo.averageRating
