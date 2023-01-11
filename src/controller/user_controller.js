@@ -16,6 +16,18 @@ async function registerUser(userName, email, googleUser) {
       ],
     });
 
+    if (user[0].firstLogin) {
+      await transporter.sendMail({
+        from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+        to: user[0].email, // list of receivers
+        subject: `Welcome to Henry Book Explorer`, // Subject line
+        html: `<b>Hi, ${user[0].userName}! <p>Welcome to Henry Book Explorer!</p><p> We can't wait for you to see our catalogue.</p> <p> Remember to subscribe to be able to read them!</p></b>`, // html body
+      });
+      await user[0].update({
+        firstLogin: false,
+      });
+    }
+
     return user[0];
   } catch (e) {
     throw Error(e.message);
