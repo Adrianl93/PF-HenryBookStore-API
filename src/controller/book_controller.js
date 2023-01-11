@@ -34,9 +34,7 @@ function validatePost({
 
   let regexAverageRatin = /^\d+$/;
   if (averageRating === "") averageRating = null;
-  if (averageRating && !regexAverageRatin.test(averageRating)) {
-    throw new Error("el averageRating debe ser un numero");
-  }
+
   if (averageRating < 0 || averageRating > 5) {
     throw new Error("el healthScore debe estar entre 0 y 5");
   }
