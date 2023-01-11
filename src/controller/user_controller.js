@@ -114,6 +114,26 @@ async function editUser(
       }
     }
 
+    if (banned !== null && banned !== user.banned) {
+      if (banned === true) {
+        await transporter.sendMail({
+          from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: `Accout Banned`, // Subject line
+          html: `<b>Hi, ${user.userName}! <p>Your account has been banned by an admin.</p></b>`, // html body
+        });
+      } else {
+        if (banned === false) {
+          await transporter.sendMail({
+            from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+            to: user.email, // list of receivers
+            subject: `Accout Restored`, // Subject line
+            html: `<b>Hi, ${user.userName}! <p>Your account has been restored.</p><p> You can now use Henry Books Store as you used to.</p> <p> We are happy to have you back!</p></b>`, // html body
+          });
+        }
+      }
+    }
+
     user.update({
       userName,
       email,
