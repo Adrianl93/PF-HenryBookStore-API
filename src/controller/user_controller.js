@@ -94,6 +94,26 @@ async function editUser(
       }
     }
 
+    if (active !== null && active !== user.active) {
+      if (active === false) {
+        await transporter.sendMail({
+          from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: `Accout Disabled`, // Subject line
+          html: `<b>Hi, ${user.userName}! <p>Your account has been disabled.</p><p> You can always log back to reactivate your account.</p> <p> We hope to see you back soon!</p></b>`, // html body
+        });
+      } else {
+        if (active === true) {
+          await transporter.sendMail({
+            from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+            to: user.email, // list of receivers
+            subject: `Accout Restored`, // Subject line
+            html: `<b>Hi, ${user.userName}! <p>Your account has been restored.</p><p> You can now use Henry Books Store as you used to.</p> <p> We are happy to have you back!</p></b>`, // html body
+          });
+        }
+      }
+    }
+
     user.update({
       userName,
       email,
@@ -102,7 +122,7 @@ async function editUser(
       profilePic,
       notifications,
       active,
-      banned
+      banned,
     });
   } catch (e) {
     throw Error(e.message);
@@ -165,6 +185,13 @@ async function activateSubscription(id, plan) {
       let newSubscription = await Subscription.create(subscription);
       user.setSubscription(newSubscription.id);
     }
+
+    await transporter.sendMail({
+      from: '"Henry Books " <henrybookexplorer@gmail.com>', // sender address
+      to: user.email, // list of receivers
+      subject: `Subscription Started`, // Subject line
+      html: `<b><p>Hi, ${user.userName}!</p><p> Your subscription has began, congratulations!</p> <p>We are sure you will enjoy reading all our catalogue</p></b>`, // html body
+    });
   } catch (e) {
     console.log(e);
     throw Error(e.message);
@@ -184,7 +211,7 @@ async function checkUsersSubscriptions() {
           from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
           to: user.email, // list of receivers
           subject: `Subscription Expired`, // Subject line
-          html: `<b>Hi, ${user.userName}! Your subscription has expired. Please renew the subscription to continue reading our books</b>`, // html body
+          html: `<b><p>Hi, ${user.userName}!</p><p> Your subscription has expired.</p><p> Please renew the subscription to continue reading our books</p></b>`, // html body
         });
       }
     });

@@ -47,13 +47,23 @@ router.post("/register", async (req, res) => {
     const user = await registerUser(nickname, email, googleUser);
     res.status(200).json(user);
   } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });
 
 router.put("/edit", async (req, res) => {
-  const { id, userName, email, password, admin, profilePic, notifications, active, banned } =
-    req.body;
+  const {
+    id,
+    userName,
+    email,
+    password,
+    admin,
+    profilePic,
+    notifications,
+    active,
+    banned,
+  } = req.body;
 
   try {
     await editUser(
@@ -69,6 +79,7 @@ router.put("/edit", async (req, res) => {
     );
     res.status(200).send("User updated succesfully");
   } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });
