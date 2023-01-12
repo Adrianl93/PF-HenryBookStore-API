@@ -16,6 +16,18 @@ async function registerUser(userName, email, googleUser) {
       ],
     });
 
+    if (user[0].firstLogin) {
+      await transporter.sendMail({
+        from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+        to: user[0].email, // list of receivers
+        subject: `Welcome to Henry Book Explorer`, // Subject line
+        html: `<b>Hi, ${user[0].userName}! <p>Welcome to Henry Book Explorer!</p><p> We can't wait for you to see our catalogue.</p> <p> Remember to subscribe to be able to read them!</p></b>`, // html body
+      });
+      await user[0].update({
+        firstLogin: false,
+      });
+    }
+
     return user[0];
   } catch (e) {
     throw Error(e.message);
@@ -114,6 +126,26 @@ async function editUser(
       }
     }
 
+    if (banned !== null && banned !== user.banned) {
+      if (banned === true) {
+        await transporter.sendMail({
+          from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: `Accout Banned`, // Subject line
+          html: `<b>Hi, ${user.userName}! <p>Your account has been banned by an admin.</p></b>`, // html body
+        });
+      } else {
+        if (banned === false) {
+          await transporter.sendMail({
+            from: '"Henry Books" <henrybookexplorer@gmail.com>', // sender address
+            to: user.email, // list of receivers
+            subject: `Accout Restored`, // Subject line
+            html: `<b>Hi, ${user.userName}! <p>Your account has been restored.</p><p> You can now use Henry Books Store as you used to.</p> <p> We are happy to have you back!</p></b>`, // html body
+          });
+        }
+      }
+    }
+
     user.update({
       userName,
       email,
@@ -186,12 +218,14 @@ async function activateSubscription(id, plan) {
       user.setSubscription(newSubscription.id);
     }
 
-    await transporter.sendMail({
-      from: '"Henry Books " <henrybookexplorer@gmail.com>', // sender address
-      to: user.email, // list of receivers
-      subject: `Subscription Started`, // Subject line
-      html: `<b><p>Hi, ${user.userName}!</p><p> Your subscription has began, congratulations!</p> <p>We are sure you will enjoy reading all our catalogue</p></b>`, // html body
-    });
+    if (user.notifications.expDate && user.notifications.all) {
+      await transporter.sendMail({
+        from: '"Henry Books " <henrybookexplorer@gmail.com>', // sender address
+        to: user.email, // list of receivers
+        subject: `Subscription Started`, // Subject line
+        html: `<b><p>Hi, ${user.userName}!</p><p> Your subscription has began, congratulations!</p> <p>We are sure you will enjoy reading all our catalogue</p></b>`, // html body
+      });
+    }
   } catch (e) {
     console.log(e);
     throw Error(e.message);
@@ -207,12 +241,14 @@ async function checkUsersSubscriptions() {
       if (user.subscription && currentDate > user.subscription.finishDate) {
         let subscription = await Subscription.findByPk(user.subscription.id);
         subscription.destroy();
-        await transporter.sendMail({
-          from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
-          to: user.email, // list of receivers
-          subject: `Subscription Expired`, // Subject line
-          html: `<b><p>Hi, ${user.userName}!</p><p> Your subscription has expired.</p><p> Please renew the subscription to continue reading our books</p></b>`, // html body
-        });
+        if (user.notifications.expDate && user.notifications.all) {
+          await transporter.sendMail({
+            from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
+            to: user.email, // list of receivers
+            subject: `Subscription Expired`, // Subject line
+            html: `<b><p>Hi, ${user.userName}!</p><p> Your subscription has expired.</p><p> Please renew the subscription to continue reading our books</p></b>`, // html body
+          });
+        }
       }
     });
   } catch (e) {
